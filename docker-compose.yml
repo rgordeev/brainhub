@@ -1,0 +1,27 @@
+version: "3.4"
+services:
+
+  gateway:
+    build:
+      context: ./gateway/
+      dockerfile: Dockerfile
+    image: brainhub/gateway:${TAG}
+
+  service1:
+    build:
+      context: ./serv1/
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+    image: brainhub/service1:${TAG}
+
+  service2:
+    build:
+      context: ./serv2/
+      dockerfile: Dockerfile
+      args:
+        - UID=${UID}
+        - GID=${GID}
+    image: brainhub/service2:${TAG}
+

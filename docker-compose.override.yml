@@ -1,0 +1,46 @@
+version: "3.4"
+services:
+
+  gateway:
+    ports:
+      - '80:80'
+      - '443:443'
+    depends_on:
+      - service1
+      - service2
+    volumes:
+      # - ./etc/ssl:/etc/nginx/ssl
+      - './gateway/etc/ssl/certs/nginx-selfsigned.crt:/etc/nginx/ssl/nginx-selfsigned.crt'
+      - './gateway/etc/ssl/private/nginx-selfsigned.key:/etc/nginx/ssl/nginx-selfsigned.key'
+      - './gateway/etc/service-hub.conf:/etc/nginx/service.conf'
+      - nginx-logs:/var/log/nginx
+    environment:
+      - 'TZ=Europe/Moscow'
+      - 'SSL_CERT=nginx-selfsigned.crt'
+      - 'SSL_KEY=nginx-selfsigned.key'
+      # - LETSENCRYPT=true
+      # - LE_EMAIL=info@brainhub.com
+      # - LE_FQDN=www.brainhub.com
+    networks:
+      backend: { aliases: [gateway.backend] }
+
+
+  service1:
+    volumes:
+      - './serv1/var/www:/var/www'
+    networks:
+      backend: { aliases: [service1.backend] }
+
+  service2:
+    volumes:
+      - './serv2/var/www:/var/www'
+    networks:
+      backend: { aliases: [service2.backend] }
+
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  nginx-logs:
